@@ -1,0 +1,26 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": false
+    }
+  },
+  "plugins": [
+    "prettier"
+  ],
+  "extends": [
+    "eslint:recommended"
+  ],
+  "rules": {
+    "prettier/prettier": "error",
+    "no-console": "off"
+  },
+  "env": {
+    "browser": true,
+    "node": false,
+    "amd": false,
+    "es6": true,
+    "jquery": true
+  }
+}

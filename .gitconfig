@@ -1,0 +1,12 @@
+# cp ./.gitconfig ~/.gitconfig
+# git config --global core.autocrlf false
+# git config --global core.safecrlf true
+# git config --global core.eol lf
+# git config --global core.editor vim
+# git config --global user.name "Nurasyl Aldan"
+# git config --global user.email "nurassyl.aldan@gmail.com"
+[core]
+	autocrlf = false
+	safecrlf = true
+	eol = lf
+	editor = vim

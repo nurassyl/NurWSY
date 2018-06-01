@@ -1,0 +1,20 @@
+{
+  "presets": [
+    "env",
+    "flow"
+  ],
+  "ast": true,
+  "comments": true,
+  "compact": true,
+  "minified": false,
+  "sourceMaps": true,
+  "env": {
+    "production": {
+      "ast": false,
+      "comments": false,
+      "compact": false,
+      "minified": true,
+      "sourceMaps": false
+    }
+  }
+}

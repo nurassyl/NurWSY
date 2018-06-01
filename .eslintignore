@@ -1,0 +1,6 @@
+node_modules/
+flow-typed/
+dist/
+tests/
+karma.conf.js
+bs-config.js
