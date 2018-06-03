@@ -16,10 +16,15 @@ btn.onclick = function() {
 		// not selected
 		console.log('not selected');
 	}
-	console.log(nur._anchorOffset);
-	console.log(nur._focusOffset);
-	console.log(nur._anchorNode);
-	console.log(nur._focusNode);
+
+	//console.log(nur._anchorOffset);
+	//console.log(nur._focusOffset);
+	//console.log(nur._anchorNode);
+	//console.log(nur._focusNode);
+
+	if(nur.isSelected) {
+		console.dir( NurWSY._findTextNode(nur._anchorNode) );
+	}
 
 	console.log('-----');
 }

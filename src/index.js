@@ -13,7 +13,6 @@ class NurWSY { // eslint-disable-line
 	isSelected: boolean;
 	isCaret: boolean;
 	isRange: boolean;
-	isCollapsed: boolean;
 
 	_anchorNode: ?Node;
 	_focusNode: ?Node;
@@ -43,7 +42,6 @@ class NurWSY { // eslint-disable-line
 		this.isSelected = false;
 		this.isCaret = false;
 		this.isRange = false;
-		this.isCollapsed = false;
 
 		if (options.wysiwyg === true) {
 			this.root.setAttribute('contenteditable', 'true');
@@ -59,7 +57,6 @@ class NurWSY { // eslint-disable-line
 		this.isSelected = false;
 		this.isCaret = false;
 		this.isRange = false;
-		this.isCollapsed = false;
 
 		// set selection object to class property
 		this.selection = window.getSelection();
@@ -76,17 +73,13 @@ class NurWSY { // eslint-disable-line
 			this.isRange = true;
 		}
 
-		if (this.selection.isCollapsed) {
-			this.isCollapsed = true;
-		}
-
 		// return selection object
 		return this.selection;
 	}
 
 	/**
 	 * @returns {Node|Array|false|null}
-	 * null		- no selection.
+	 * null		- not selected.
 	 * false	- error selection.
 	 * Node		- one node selection.
 	 * Array	- range selection
@@ -101,7 +94,7 @@ class NurWSY { // eslint-disable-line
 		this._anchorOffset = undefined;
 		this._focusOffset = undefined;
 
-		if (this.isSelected && this.isRange) {
+		if (this.isSelected) {
 			// get main anchor node
 			this._anchorNode = (this.selection.anchorNode: any);
 			while (true) { // eslint-disable-line
@@ -222,7 +215,26 @@ class NurWSY { // eslint-disable-line
 		}
 		return null;
 	}
-	_getTextNode() {
-		return undefined;
+
+	/**
+	 * Find text node of element node.
+	 *
+	 * @param {Node} node - Element node.
+	 * @return {Node|null}
+	 *
+	 * @static
+	 */
+	static _findTextNode(node: Node): ?Node {
+		let Node = node;
+		while (true) { // eslint-disable-line
+			if (Node.childNodes.length === 0 && Node.nodeName === '#text') {
+				return Node;
+			} else {
+				if (Node.childNodes.length === 0) {
+					return null;
+				}
+			}
+			Node = Node.childNodes[0];
+		}
 	}
 }
