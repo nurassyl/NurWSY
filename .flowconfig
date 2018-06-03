@@ -17,4 +17,3 @@ flow-typed/
 [options]
 all=true
 module.file_ext=.js
-module.use_strict=true

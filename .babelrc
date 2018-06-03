@@ -1,16 +1,17 @@
 {
   "presets": [
-    "env",
-    "flow"
+    "flow",
+    "env"
   ],
-  "ast": true,
+  "plugins": [
+    "transform-class-properties"
+  ],
   "comments": true,
   "compact": true,
   "minified": false,
   "sourceMaps": true,
   "env": {
     "production": {
-      "ast": false,
       "comments": false,
       "compact": false,
       "minified": true,
