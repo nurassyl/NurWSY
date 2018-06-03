@@ -26,7 +26,7 @@ class Noname { // eslint-disable-line
 	 * @param	{HTMLDivElement} root
 	 * @param	{object} options
 	 */
-	constructor(root: HTMLDivElement, options: any = new Object()) {
+	constructor(root: HTMLDivElement, options: any = new Object()): void {
 		// options
 		options.tools =
 			options.tools === undefined || options.tools === null ? null : options.tools;
@@ -39,7 +39,7 @@ class Noname { // eslint-disable-line
 		// get selection object
 		this.selection = window.getSelection();
 
-		// for "this.getSelection()"
+		// for "this._getSelection()"
 		this.isSelected = false;
 		this.isCaret = false;
 		this.isRange = false;
@@ -55,7 +55,7 @@ class Noname { // eslint-disable-line
 	 *
 	 * @return {Selection}
 	 */
-	getSelection(): Selection {
+	_getSelection(): Selection {
 		this.isSelected = false;
 		this.isCaret = false;
 		this.isRange = false;
@@ -85,15 +85,15 @@ class Noname { // eslint-disable-line
 	}
 
 	/**
-	 * @returns {null|false|Node|Array}
+	 * @returns {Node|Array|false|null}
 	 * null		- no selection.
 	 * false	- error selection.
 	 * Node		- one node selection.
 	 * Array	- range selection
 	 */
-	getSelectedNodes() {
+	_getSelectedNodes(): Node | Array<Node> | false | null {
 		// get selection info
-		this.getSelection();
+		this._getSelection();
 
 		// reset properties
 		this._anchorNode = undefined;
@@ -103,35 +103,29 @@ class Noname { // eslint-disable-line
 
 		if (this.isSelected && this.isRange) {
 			// get main anchor node
-			this._anchorNode = this.selection.anchorNode;
+			this._anchorNode = (this.selection.anchorNode: any);
 			while (true) { // eslint-disable-line
-				// $FlowFixMe
 				if (this._anchorNode.parentNode === this.root) {
 					this._anchorNode = this._anchorNode;
 					break;
-					// $FlowFixMe
 				} else if (this._anchorNode.parentNode === null) {
 					this._anchorNode = null;
 					break;
 				}
-				// $FlowFixMe
-				this._anchorNode = this._anchorNode.parentNode;
+				this._anchorNode = (this._anchorNode: any).parentNode;
 			}
 
 			// get main focus node
-			this._focusNode = this.selection.focusNode;
+			this._focusNode = (this.selection.focusNode: any);
 			while (true) { // eslint-disable-line
-				// $FlowFixMe
 				if (this._focusNode.parentNode === this.root) {
 					this._focusNode = this._focusNode;
 					break;
-					// $FlowFixMe
 				} else if (this._focusNode.parentNode === null) {
 					this._focusNode = null;
 					break;
 				}
-				// $FlowFixMe
-				this._focusNode = this._focusNode.parentNode;
+				this._focusNode = (this._focusNode: any).parentNode;
 			}
 
 			// check selection
@@ -140,37 +134,36 @@ class Noname { // eslint-disable-line
 
 				return false;
 			} else if (this._anchorNode === this._focusNode) {
-				// caret or one element selection of range.
+				// one element selection
 
 				// get right offsets
 				this._anchorOffset = this.selection.anchorOffset;
 
 				let fromLeft: boolean = false; // eslint-disable-line
 
-				// $FlowFixMe
-				let nodeValue: string = this.selection.anchorNode.nodeValue;
+				let nodeValue: string = (this.selection.anchorNode: any).nodeValue;
 				let anchorOffset: number = this.selection.anchorOffset;
 
 				let selectedText: string = this.selection.toString();
 
-				// $FlowFixMe
 				if (selectedText === nodeValue.substr(anchorOffset, selectedText.length)) {
 					// from left
 					fromLeft = true;
 				} else {
 					// from right
 					fromLeft = false;
-					// $FlowFixMe
-					this._anchorOffset = this._anchorOffset - 1;
+
+					this._anchorOffset =
+						typeof this._anchorOffset === 'number' ? this._anchorOffset - 1 : undefined;
 				}
 
 				// set focus offset
 				this._focusOffset = selectedText.length;
 
 				// return one node
-				return this._anchorNode;
+				return (this._anchorNode: any);
 			} else {
-				// range selection
+				// multiple elements selection
 
 				// get nodes
 				const nodes = [this._anchorNode, this._focusNode];
@@ -228,5 +221,8 @@ class Noname { // eslint-disable-line
 			}
 		}
 		return null;
+	}
+	_getTextNode() {
+		return undefined;
 	}
 }
