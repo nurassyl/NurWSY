@@ -1,8 +1,8 @@
-const n = new Noname(document.getElementById('root'));
+const nur = new NurWSY(document.getElementById('root'));
 const btn = document.getElementById('btn');
 
 btn.onclick = function() {
-	var s = n._getSelectedNodes();
+	let s = nur._getSelectedNodes();
 	if(s instanceof Node) {
 		// one node selected
 		console.log(s);
@@ -16,10 +16,10 @@ btn.onclick = function() {
 		// not selected
 		console.log('not selected');
 	}
-	console.log(n._anchorOffset);
-	console.log(n._focusOffset);
-	console.log(n._anchorNode);
-	console.log(n._focusNode);
+	console.log(nur._anchorOffset);
+	console.log(nur._focusOffset);
+	console.log(nur._anchorNode);
+	console.log(nur._focusNode);
 
 	console.log('-----');
 }

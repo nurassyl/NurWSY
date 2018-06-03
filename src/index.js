@@ -1,12 +1,12 @@
 /**
- * Noname - The framework.
+ * NurWSY - The WYSIWYG framework.
  * @author Nurasyl Aldan <nurassyl.aldan@gmail.com>
  * @version 1.0.0
  */
 
 // @flow
 
-class Noname { // eslint-disable-line
+class NurWSY { // eslint-disable-line
 	root: HTMLDivElement;
 	tools: ?HTMLDivElement;
 	selection: Selection;
@@ -22,7 +22,7 @@ class Noname { // eslint-disable-line
 
 	/**
 	 * @constructor
-	 * @this	{Noname}
+	 * @this	{NurWSY}
 	 * @param	{HTMLDivElement} root
 	 * @param	{object} options
 	 */

@@ -1,7 +1,7 @@
 {
-  "name": "noname",
+  "name": "NurWSY",
   "version": "1.0.0",
-  "description": "",
+  "description": "NurWSY - The WYSIWYG framework",
   "main": "./src/index.js",
 
   "scripts": {
