@@ -27,8 +27,7 @@ class NurWSY { // eslint-disable-line
 	 */
 	constructor(root: HTMLDivElement, options: any = new Object()): void {
 		// options
-		options.tools =
-			options.tools === undefined || options.tools === null ? null : options.tools;
+		options.tools = options.tools === undefined || options.tools === null ? null : options.tools;
 		options.wysiwyg = options.wysiwyg === true ? true : false;
 
 		// elements
@@ -125,9 +124,16 @@ class NurWSY { // eslint-disable-line
 			if (this._anchorNode === null || this._focusNode === null) {
 				// error selection
 
+				// reset nodes
+				this._anchorNode = undefined;
+				this._focusNode = undefined;
+
 				return false;
 			} else if (this._anchorNode === this._focusNode) {
 				// one element selection
+
+				// reset focus node
+				this._focusNode = undefined;
 
 				// get right offsets
 				this._anchorOffset = this.selection.anchorOffset;
@@ -145,13 +151,15 @@ class NurWSY { // eslint-disable-line
 				} else {
 					// from right
 					fromLeft = false;
-
-					this._anchorOffset =
-						typeof this._anchorOffset === 'number' ? this._anchorOffset - 1 : undefined;
 				}
 
 				// set focus offset
 				this._focusOffset = selectedText.length;
+
+				if (!fromLeft) {
+					// if from right
+					this._anchorOffset = typeof this._anchorOffset === 'number' ? this._anchorOffset - this._focusOffset : undefined;
+				}
 
 				// return one node
 				return (this._anchorNode: any);
@@ -235,6 +243,39 @@ class NurWSY { // eslint-disable-line
 				}
 			}
 			Node = Node.childNodes[0];
+		}
+	}
+
+	/**
+	 * Divide anchor & focus nodes.
+	 *
+	 * @param {Node} node - Element node.
+	 * @return {Array|null}
+	 */
+	_divide(n) {
+		let self = this.constructor; // eslint-disable-line
+		if (n instanceof Node) {
+			// one node selected
+			if (this.isRange) {
+				if (this._anchorOffset === 0 && (this._anchorNode: any).innerText.length === this._focusOffset) {
+					console.log('full');
+				} else if (this._anchorOffset === 0) {
+					console.log('left');
+				} else if ((this._anchorNode: any).innerText.length === this._anchorOffset + this._focusOffset) {
+					console.log('right');
+				} else {
+					console.log('center');
+				}
+			}
+		} else if (n instanceof Array) {
+			// multiple nodes selected
+			return n;
+		} else if (n === false) {
+			// error selection
+			return false;
+		} else {
+			// not selected
+			return null;
 		}
 	}
 }
