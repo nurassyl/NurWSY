@@ -279,3 +279,6 @@ class NurWSY { // eslint-disable-line
 		}
 	}
 }
+
+// Access in global object.
+window.NurWSY = NurWSY;
