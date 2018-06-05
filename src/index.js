@@ -438,7 +438,7 @@ class NurWSY {
 					this._replaceText((c: any), (focusText: any).substr(0, this._focusOffset));
 					this._replaceText((d: any), (focusText: any).substr(this._focusOffset, (focusText: any).length));
 
-					return ['center', 'right', [a, b, ...nodes, c, d]];
+					return ['multi', 'center', [a, b, ...nodes, c, d]];
 				}
 			}
 		} else if (node === false) {
