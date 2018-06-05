@@ -18,6 +18,7 @@ class NurWSY {
 	_focusNode: ?Node;
 	_anchorOffset: ?number;
 	_focusOffset: ?number;
+	_single: ?boolean;
 
 	/**
 	 * NurWSY constructor.
@@ -110,6 +111,7 @@ class NurWSY {
 		this._focusNode = undefined;
 		this._anchorOffset = undefined;
 		this._focusOffset = undefined;
+		this._single = undefined;
 
 		if (this.isSelected) {
 			// get main anchor node
@@ -131,6 +133,9 @@ class NurWSY {
 				return false;
 			} else if (this._anchorNode === this._focusNode) {
 				// one element selection
+
+				// this is single node
+				this._single = true;
 
 				// reset focus node
 				this._focusNode = undefined;
@@ -164,7 +169,10 @@ class NurWSY {
 				// return one node
 				return (this._anchorNode: any);
 			} else {
-				// multiple elements selection
+				// multi elements selection
+
+				// this is don't single node
+				this._single = false;
 
 				// get nodes
 				const nodes = [this._anchorNode, this._focusNode];
@@ -329,13 +337,16 @@ class NurWSY {
 	_divide(node: Array<Node> | Node | null | false): any {
 		if (node instanceof Node) {
 			// one node selected
+
 			if (this.isRange) {
 				// Text node selection
 				if (this._anchorOffset === 0 && (this._toString(this._anchorNode): any).length === this._focusOffset) {
-					// full // '[Hello!]'
-					return ['full', this._anchorNode];
+					// full '[Hello!]'
+
+					return ['single', 'full', this._anchorNode];
 				} else if (this._anchorOffset === 0) {
 					// left // '[He]llo!'
+
 					let a = this._cloneNode(this._anchorNode);
 					let b = this._cloneNode(this._anchorNode);
 
@@ -344,9 +355,10 @@ class NurWSY {
 					this._replaceText((a: any), (text: any).substr(this._anchorOffset, this._focusOffset));
 					this._replaceText((b: any), (text: any).substr(this._focusOffset, (text: any).length));
 
-					return ['left', a, b];
+					return ['single', 'left', a, b];
 				} else if ((this._toString(this._anchorNode): any).length === this._anchorOffset + this._focusOffset) {
 					// right 'Hel[lo!]'
+
 					let a = this._cloneNode((this._anchorNode: any));
 					let b = this._cloneNode((this._anchorNode: any));
 
@@ -355,9 +367,10 @@ class NurWSY {
 					this._replaceText((a: any), (text: any).substr(0, this._anchorOffset));
 					this._replaceText((b: any), (text: any).substr(this._anchorOffset, (text: any).length));
 
-					return ['right', a, b];
+					return ['single', 'right', a, b];
 				} else {
 					// center 'H[el]lo!'
+
 					let a = this._cloneNode((this._anchorNode: any));
 					let b = this._cloneNode((this._anchorNode: any));
 					let c = this._cloneNode((this._anchorNode: any));
@@ -368,17 +381,73 @@ class NurWSY {
 					this._replaceText((b: any), (text: any).substr(this._anchorOffset, this._focusOffset));
 					this._replaceText((c: any), (text: any).substr(this._anchorOffset + this._focusOffset, (text: any).length));
 
-					return ['center', a, b, c];
+					return ['single', 'center', a, b, c];
 				}
 			}
 		} else if (node instanceof Array) {
-			// multiple nodes selected
-			return [node];
+			// multi nodes selected
+
+			// clone array
+			let nodes = node.slice(1, node.length - 1);
+
+			if (this.isRange) {
+				if (this._anchorOffset === 0 && this._focusOffset === (this._toString(this._focusNode): any).length) {
+					// full [Hello Nurasyl!]
+
+					return ['multi', 'full', [nodes]];
+				} else if (this._anchorOffset === 0) {
+					// left [Hello Nur]asyl!
+
+					let a = this._cloneNode(this._focusNode);
+					let b = this._cloneNode(this._focusNode);
+
+					let text = this._toString((a: any));
+
+					this._replaceText((a: any), (text: any).substr(0, this._focusOffset));
+					this._replaceText((b: any), (text: any).substr(this._focusOffset, (text: any).length));
+
+					return ['multi', 'left', [this._anchorNode, ...nodes, a, b]];
+				} else if (this._focusOffset === (this._toString(this._focusNode): any).length) {
+					// right He[llo Nurasyl!]
+
+					let a = this._cloneNode((this._anchorNode: any));
+					let b = this._cloneNode((this._anchorNode: any));
+
+					let text = this._toString((a: any));
+
+					this._replaceText((a: any), (text: any).substr(0, this._anchorOffset));
+					this._replaceText((b: any), (text: any).substr(this._anchorOffset, (text: any).length));
+
+					return ['multi', 'right', [a, b, ...nodes, this._focusNode]];
+				} else {
+					// center He[llo Nur]asyl!
+
+					let a = this._cloneNode((this._anchorNode: any));
+					let b = this._cloneNode((this._anchorNode: any));
+
+					let c = this._cloneNode((this._focusNode: any));
+					let d = this._cloneNode((this._focusNode: any));
+
+					let anchorText = this._toString((a: any));
+
+					let focusText = this._toString((c: any));
+
+					this._replaceText((a: any), (anchorText: any).substr(0, this._anchorOffset));
+					this._replaceText((b: any), (anchorText: any).substr(this._anchorOffset, (anchorText: any).length));
+
+					this._replaceText((c: any), (focusText: any).substr(0, this._focusOffset));
+					this._replaceText((d: any), (focusText: any).substr(this._focusOffset, (focusText: any).length));
+
+					return ['center', 'right', [a, b, ...nodes, c, d]];
+				}
+			}
 		} else if (node === false) {
 			// error selection
+
 			return false;
 		} else {
 			// not selected
+
 			return null;
 		}
 	}
