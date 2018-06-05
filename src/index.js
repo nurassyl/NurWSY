@@ -328,13 +328,13 @@ class NurWSY {
 	/**
 	 * Divide anchor & focus nodes.
 	 *
-	 * @param {Node} node Node
 	 * @return {Array|null|false} Array|null|false
 	 * Array	- selected nodes.
 	 * null		- not selected.
 	 * false	- error selection.
 	 */
-	_divide(node: Array<Node> | Node | null | false): any {
+	_divide(): any {
+		let node = this._getSelectedNodes();
 		if (node instanceof Node) {
 			// one node selected
 
