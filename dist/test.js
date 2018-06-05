@@ -1,4 +1,6 @@
-const nur = new NurWSY(document.getElementById('root'));
+const nur = new NurWSY(document.getElementById('root'), {
+	editable: true
+});
 const btn = document.getElementById('btn');
 
 btn.onclick = function() {

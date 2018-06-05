@@ -6,7 +6,7 @@
 
 // @flow
 
-class NurWSY { // eslint-disable-line
+class NurWSY {
 	root: HTMLDivElement;
 	tools: ?HTMLDivElement;
 	selection: Selection;
@@ -20,15 +20,17 @@ class NurWSY { // eslint-disable-line
 	_focusOffset: ?number;
 
 	/**
+	 * NurWSY constructor.
+	 *
 	 * @constructor
 	 * @this	{NurWSY}
-	 * @param	{HTMLDivElement} root
-	 * @param	{object} options
+	 * @param	{HTMLDivElement} root Root div element
+	 * @param	{object} options Options
 	 */
 	constructor(root: HTMLDivElement, options: any = new Object()): void {
 		// options
 		options.tools = options.tools === undefined || options.tools === null ? null : options.tools;
-		options.wysiwyg = options.wysiwyg === true ? true : false;
+		options.editable = options.editable === true ? true : false;
 
 		// elements
 		this.root = root;
@@ -42,7 +44,7 @@ class NurWSY { // eslint-disable-line
 		this.isCaret = false;
 		this.isRange = false;
 
-		if (options.wysiwyg === true) {
+		if (options.editable === true) {
 			this.root.setAttribute('contenteditable', 'true');
 		}
 	}
@@ -50,7 +52,7 @@ class NurWSY { // eslint-disable-line
 	/**
 	 * Get selection object and selection info.
 	 *
-	 * @return {Selection}
+	 * @return {Selection} Selection object
 	 */
 	_getSelection(): Selection {
 		this.isSelected = false;
@@ -77,11 +79,27 @@ class NurWSY { // eslint-disable-line
 	}
 
 	/**
-	 * @returns {Node|Array|false|null}
+	 * @returns {Node|null} Node|null
+	 */
+	_findMainNode(node: Node): ?Node {
+		while (true) {
+			if (node.parentNode === this.root) {
+				return node;
+			} else if (node.parentNode === null) {
+				return null;
+			}
+			node = (node: any).parentNode;
+		}
+	}
+
+	/**
+	 * Find selected nodes.
+	 *
+	 * @returns {Node|Array|null|false}
+	 * Node		- one node selection.
+	 * Array	- range selection.
 	 * null		- not selected.
 	 * false	- error selection.
-	 * Node		- one node selection.
-	 * Array	- range selection
 	 */
 	_getSelectedNodes(): Node | Array<Node> | false | null {
 		// get selection info
@@ -96,29 +114,11 @@ class NurWSY { // eslint-disable-line
 		if (this.isSelected) {
 			// get main anchor node
 			this._anchorNode = (this.selection.anchorNode: any);
-			while (true) { // eslint-disable-line
-				if (this._anchorNode.parentNode === this.root) {
-					this._anchorNode = this._anchorNode;
-					break;
-				} else if (this._anchorNode.parentNode === null) {
-					this._anchorNode = null;
-					break;
-				}
-				this._anchorNode = (this._anchorNode: any).parentNode;
-			}
+			this._anchorNode = this._findMainNode(this._anchorNode);
 
 			// get main focus node
 			this._focusNode = (this.selection.focusNode: any);
-			while (true) { // eslint-disable-line
-				if (this._focusNode.parentNode === this.root) {
-					this._focusNode = this._focusNode;
-					break;
-				} else if (this._focusNode.parentNode === null) {
-					this._focusNode = null;
-					break;
-				}
-				this._focusNode = (this._focusNode: any).parentNode;
-			}
+			this._focusNode = this._findMainNode(this._focusNode);
 
 			// check selection
 			if (this._anchorNode === null || this._focusNode === null) {
@@ -138,7 +138,7 @@ class NurWSY { // eslint-disable-line
 				// get right offsets
 				this._anchorOffset = this.selection.anchorOffset;
 
-				let fromLeft: boolean = false; // eslint-disable-line
+				let fromLeft: boolean = false;
 
 				let nodeValue: string = (this.selection.anchorNode: any).nodeValue;
 				let anchorOffset: number = this.selection.anchorOffset;
@@ -225,52 +225,156 @@ class NurWSY { // eslint-disable-line
 	}
 
 	/**
-	 * Find text node of element node.
-	 *
-	 * @param {Node} node - Element node.
-	 * @return {Node|null}
-	 *
+	 * Find text node of node.
 	 * @static
+	 *
+	 * @param {Node} node Node
+	 * @return {Node|null} Node|null
 	 */
-	static _findTextNode(node: Node): ?Node {
-		let Node = node;
-		while (true) { // eslint-disable-line
-			if (Node.childNodes.length === 0 && Node.nodeName === '#text') {
-				return Node;
-			} else {
-				if (Node.childNodes.length === 0) {
-					return null;
+	static _findTextNode(node: ?Node): ?Node {
+		if (node instanceof Node) {
+			while (true) {
+				if (node.childNodes.length === 0 && node.nodeName === '#text') {
+					return node;
+				} else {
+					if (node.childNodes.length === 0) {
+						return null;
+					}
 				}
+				node = node.childNodes[0];
 			}
-			Node = Node.childNodes[0];
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Check node on text.
+	 *
+	 * @param {Node} node Node
+	 * @return {boolean} boolean
+	 */
+	_ifTextNode(node: ?Node): boolean {
+		if (node instanceof Node) {
+			if (node.nodeName === '#text') {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Clone node
+	 *
+	 * @param {Node} node Node
+	 * @return {Node|false} Node|false
+	 */
+	_cloneNode(node: ?Node): Node | false {
+		if (node instanceof Node) {
+			return node.cloneNode(true);
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Replace text in node.
+	 *
+	 * @param {Node} node Node
+	 * @param {string} text New text
+	 * @return {boolean} boolean
+	 */
+	_replaceText(node: ?Node, text = ''): boolean {
+		let n = node;
+		if (node instanceof Node) {
+			while (true) {
+				if ((n: any).childNodes.length === 0) {
+					// if text node
+					(n: any).textContent = text;
+					return true;
+				}
+				n = (n: any).childNodes[0];
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Find text from node.
+	 *
+	 * @param {Node} node - Node
+	 * @return {string|null} string|null
+	 */
+	_toString(node: ?Node): ?string {
+		if (node instanceof Node) {
+			let self = this.constructor;
+
+			node = self._findTextNode(node);
+
+			return (node: any).nodeValue;
+		} else {
+			return null;
 		}
 	}
 
 	/**
 	 * Divide anchor & focus nodes.
 	 *
-	 * @param {Node} node - Element node.
-	 * @return {Array|null}
+	 * @param {Node} node Node
+	 * @return {Array|null|false} Array|null|false
+	 * Array	- selected nodes.
+	 * null		- not selected.
+	 * false	- error selection.
 	 */
-	_divide(n) {
-		let self = this.constructor; // eslint-disable-line
-		if (n instanceof Node) {
+	_divide(node: Array<Node> | Node | null | false): any {
+		if (node instanceof Node) {
 			// one node selected
 			if (this.isRange) {
-				if (this._anchorOffset === 0 && (this._anchorNode: any).innerText.length === this._focusOffset) {
-					console.log('full');
+				// Text node selection
+				if (this._anchorOffset === 0 && (this._toString(this._anchorNode): any).length === this._focusOffset) {
+					// full // '[Hello!]'
+					return ['full', this._anchorNode];
 				} else if (this._anchorOffset === 0) {
-					console.log('left');
-				} else if ((this._anchorNode: any).innerText.length === this._anchorOffset + this._focusOffset) {
-					console.log('right');
+					// left // '[He]llo!'
+					let a = this._cloneNode(this._anchorNode);
+					let b = this._cloneNode(this._anchorNode);
+
+					let text = this._toString((a: any));
+
+					this._replaceText((a: any), (text: any).substr(this._anchorOffset, this._focusOffset));
+					this._replaceText((b: any), (text: any).substr(this._focusOffset, (text: any).length));
+
+					return ['left', a, b];
+				} else if ((this._toString(this._anchorNode): any).length === this._anchorOffset + this._focusOffset) {
+					// right 'Hel[lo!]'
+					let a = this._cloneNode((this._anchorNode: any));
+					let b = this._cloneNode((this._anchorNode: any));
+
+					let text = this._toString((a: any));
+
+					this._replaceText((a: any), (text: any).substr(0, this._anchorOffset));
+					this._replaceText((b: any), (text: any).substr(this._anchorOffset, (text: any).length));
+
+					return ['right', a, b];
 				} else {
-					console.log('center');
+					// center 'H[el]lo!'
+					let a = this._cloneNode((this._anchorNode: any));
+					let b = this._cloneNode((this._anchorNode: any));
+					let c = this._cloneNode((this._anchorNode: any));
+
+					let text = this._toString((a: any));
+
+					this._replaceText((a: any), (text: any).substr(0, this._anchorOffset));
+					this._replaceText((b: any), (text: any).substr(this._anchorOffset, this._focusOffset));
+					this._replaceText((c: any), (text: any).substr(this._anchorOffset + this._focusOffset, (text: any).length));
+
+					return ['center', a, b, c];
 				}
 			}
-		} else if (n instanceof Array) {
+		} else if (node instanceof Array) {
 			// multiple nodes selected
-			return n;
-		} else if (n === false) {
+			return [node];
+		} else if (node === false) {
 			// error selection
 			return false;
 		} else {

@@ -7,7 +7,7 @@
     "transform-class-properties"
   ],
   "comments": true,
-  "compact": true,
+  "compact": "auto",
   "minified": false,
   "sourceMaps": true,
   "env": {

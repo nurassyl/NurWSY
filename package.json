@@ -5,6 +5,7 @@
   "main": "./src/index.js",
   "scripts": {
     "start": "bash run.sh",
+    "build": "cross-env BABEL_ENV=production babel src/index.js --out-file dist/build.js",
     "test": "karma start karma.conf.js",
     "test:cross-env": "cross-env ENV=test cross-env NODE_ENV=$ENV cross-env BABEL_ENV=$ENV mocha tests/cross-env.js",
     "eslint:fix": "eslint src/*.js src/**/*.js --fix",
