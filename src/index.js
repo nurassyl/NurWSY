@@ -45,8 +45,11 @@ class NurWSY {
 		this.isCaret = false;
 		this.isRange = false;
 
-		// trim tabs, new lines, spaces.
+		// trim tabs, new lines, spaces
 		this.trimTextContent();
+
+		// destroy empty nodes
+		this.destroyEmptyNodes();
 
 		if (options.editable === true) {
 			this.root.setAttribute('contenteditable', 'true');
@@ -332,10 +335,11 @@ class NurWSY {
 
 			node = self._findTextNode(node);
 
-			return (node: any).nodeValue;
-		} else {
-			return null;
+			if (node !== null) {
+				return (node: any).nodeValue;
+			}
 		}
+		return null;
 	}
 
 	/**
@@ -634,6 +638,34 @@ class NurWSY {
 
 		// return error data
 		return false;
+	}
+
+	/**
+	 * Check node to empty.
+	 *
+	 * @return {boolean} boolean
+	 */
+	nodeIsEmpty(node: ?Node): boolean {
+		if (node != null) {
+			let text = this._toString(node);
+			if (text === null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Destroy empty nodes (in edit mode).
+	 *
+	 * @return {undefined} undefined
+	 */
+	destroyEmptyNodes(): void {
+		for (let node of this.root.childNodes) {
+			if (this.nodeIsEmpty(node)) {
+				(node: any).remove();
+			}
+		}
 	}
 }
 
