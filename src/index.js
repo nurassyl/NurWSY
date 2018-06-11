@@ -1,5 +1,5 @@
 /**
- * NurWSY - The WYSIWYG framework.
+ * NurWSY - The WYSIWYG framework
  * @author Nurasyl Aldan <nurassyl.aldan@gmail.com>
  * @version 1.0.0
  */
@@ -383,6 +383,88 @@ class NurWSY {
 
 					return ['single', 'center', a, b, c];
 				}
+			} else if (this.isCaret) {
+				// is caret
+
+				// get main node.
+				let mainNode = this._findMainNode((this.selection.focusNode: any));
+
+				// get next nodes
+
+				let nextNode = (mainNode: any).nextSibling;
+
+				let nextNodes = [];
+
+				while (true) {
+					if (nextNode === null) {
+						break;
+					} else {
+						nextNodes.push(nextNode);
+					}
+					nextNode = (nextNode: any).nextSibling;
+				}
+
+				//
+
+				// get previous nodes
+
+				let prevNode = (mainNode: any).previousSibling;
+
+				let prevNodes = [];
+
+				while (true) {
+					if (prevNode === null) {
+						break;
+					} else {
+						prevNodes.push(prevNode);
+					}
+					prevNode = (prevNode: any).previousSibling;
+				}
+
+				//
+
+				// get string
+				let text = this._toString((mainNode: any));
+
+				// get text length
+				let len: number = (text: any).length;
+
+				// get offset
+				let offset: number = this.selection.focusOffset;
+
+				// divide main node
+				let a = this._cloneNode(mainNode);
+				let b = this._cloneNode(mainNode);
+
+				this._replaceText((a: any), (text: any).substr(0, offset));
+				this._replaceText((b: any), (text: any).substr(offset, len));
+
+				if ((this._toString((a: any)): any).length === 0) {
+					a = null;
+				}
+				if ((this._toString((b: any)): any).length === 0) {
+					b = null;
+				}
+
+				let result = [
+					[
+						...prevNodes
+						// a,
+					],
+					[
+						// b,
+						...nextNodes
+					]
+				];
+
+				if (a !== null) {
+					result[0].push(a);
+				}
+				if (b !== null) {
+					result[1].unshift(b);
+				}
+
+				return result;
 			}
 		} else if (node instanceof Array) {
 			// multi nodes selected
