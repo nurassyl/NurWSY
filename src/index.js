@@ -645,11 +645,17 @@ class NurWSY {
 	 *
 	 * @return {boolean} boolean
 	 */
-	nodeIsEmpty(node: ?Node): boolean {
+	nodeIsEmpty(node: ?Node, trim = false): boolean {
 		if (node != null) {
 			let text = this._toString(node);
 			if (text === null) {
 				return true;
+			} else {
+				if (trim === true) {
+					if ((text: any).trim() === '') {
+						return true;
+					}
+				}
 			}
 		}
 		return false;
@@ -660,9 +666,9 @@ class NurWSY {
 	 *
 	 * @return {undefined} undefined
 	 */
-	destroyEmptyNodes(): void {
+	destroyEmptyNodes(trim = false): void {
 		for (let node of this.root.childNodes) {
-			if (this.nodeIsEmpty(node)) {
+			if (this.nodeIsEmpty(node, trim)) {
 				(node: any).remove();
 			}
 		}
