@@ -450,6 +450,95 @@ class NurWSY {
 
 			return null;
 		}
+		return null;
+	}
+
+	/**
+	 * Set caret to end.
+	 * @static
+	 *
+	 * @param {HTMLElement} el HTML element
+	 * @return {boolean} boolean
+	 */
+	static caretToEnd(el: ?HTMLElement): boolean {
+		if (el != null) {
+			// get selection object
+			let sel = window.getSelection();
+
+			// focus to element
+			el.focus();
+
+			// get nodes
+			let nodes = el.childNodes;
+
+			if (nodes.length !== 0) {
+				// if nodes is exists
+
+				// get last node
+				let lastNode = nodes[nodes.length - 1];
+
+				if (lastNode.textContent.length !== 0) {
+					// if node text length is not zero
+
+					// get range object
+					let range = sel.getRangeAt(0);
+
+					// set caret position to end
+					range.setStart(lastNode, lastNode.textContent.length);
+					range.setEnd(lastNode, lastNode.textContent.length);
+
+					// return success data
+					return true;
+				}
+			}
+		}
+
+		// return error data
+		return false;
+	}
+
+	/**
+	 * Set caret to start.
+	 * @static
+	 *
+	 * @param {HTMLElement} el HTML element
+	 * @return {boolean} boolean
+	 */
+	static caretToStart(el): boolean {
+		if (el != null) {
+			// get selection object
+			let sel = window.getSelection();
+
+			// focus to element
+			el.focus();
+
+			// get nodes
+			let nodes = el.childNodes;
+
+			if (nodes.length !== 0) {
+				// if nodes is exists
+
+				// get first node
+				let firstNode = nodes[0];
+
+				if (firstNode.textContent.length !== 0) {
+					// if node text length is not zero
+
+					// get range object
+					let range = sel.getRangeAt(0);
+
+					// set caret position to start
+					range.setStart(firstNode, 0);
+					range.setEnd(firstNode, 0);
+
+					// return success data
+					return true;
+				}
+			}
+		}
+
+		// return error data
+		return false;
 	}
 }
 

@@ -9,8 +9,8 @@
     "test": "karma start karma.conf.js",
     "test:cross-env": "cross-env ENV=test cross-env NODE_ENV=$ENV cross-env BABEL_ENV=$ENV mocha tests/cross-env.js",
     "eslint:fix": "eslint src/*.js src/**/*.js --fix",
-    "test:flow": "flow check",
-    "test:eslint": "eslint src/*.js src/**/*.js"
+    "test:eslint": "eslint src/*.js src/**/*.js",
+    "test:flow": "flow check"
   },
   "devDependencies": {
     "autoprefixer": "^8.5.2",
