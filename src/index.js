@@ -45,12 +45,22 @@ class NurWSY {
 		this.isCaret = false;
 		this.isRange = false;
 
-		// trim tabs, new line, spaces.
-		this.root.innerHTML = this.root.innerHTML.trim();
+		// trim tabs, new lines, spaces.
+		this.trimTextContent();
 
 		if (options.editable === true) {
 			this.root.setAttribute('contenteditable', 'true');
 		}
+	}
+
+	/**
+	 * Trim text content of root container.
+	 *
+	 * @return {undefined} undefined
+	 */
+	trimTextContent(): void {
+		// trim tabs, new lines, spaces.
+		this.root.innerHTML = this.root.innerHTML.trim();
 	}
 
 	/**
