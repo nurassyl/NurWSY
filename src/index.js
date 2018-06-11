@@ -45,6 +45,9 @@ class NurWSY {
 		this.isCaret = false;
 		this.isRange = false;
 
+		// trim tabs, new line, spaces.
+		this.root.innerHTML = this.root.innerHTML.trim();
+
 		if (options.editable === true) {
 			this.root.setAttribute('contenteditable', 'true');
 		}
